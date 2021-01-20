@@ -60,7 +60,7 @@ class App(tk.Tk):
         self.x = self.y = 0
         self.geometry("820x690")
         self.resizable(0,0)
-        self.title("Handwriiten Digit Recognition GUI")
+        self.title("Handwritten Digit Recognition GUI")
 
 
         # Creating elements
