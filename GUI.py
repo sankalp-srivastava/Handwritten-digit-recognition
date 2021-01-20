@@ -57,16 +57,20 @@ class App(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
         self.lastx = self.lasty = None
-
         self.x = self.y = 0
-        # self.geometry("900x600")
+        self.geometry("820x690")
+        self.resizable(0,0)
+        self.title("Handwriiten Digit Recognition GUI")
 
-        self.data = ""
 
         # Creating elements
-        self.canvas = tk.Canvas(self, width=900, height=600, bg="white")
-        self.classify_btn = tk.Button(self, text="Recognise", command=self.classify_handwriting)
-        self.button_clear = tk.Button(self, text="Clear", command=self.clear_all)
+        self.canvas = tk.Canvas(self, width=800, height=600, bg="white", borderwidth=5)
+        self.classify_btn = tk.Button(self, text="Recognise", command=self.classify_handwriting,
+                                      bg='deep sky blue')
+        self.classify_btn.config(font=('helvetica', 14, 'bold'))
+        self.button_clear = tk.Button(self, text="Clear", command=self.clear_all,
+                                      bg='deep sky blue')
+        self.button_clear.config(font=('helvetica', 14, 'bold'))
 
         # Grid structure
         self.canvas.grid(row=0, column=0, pady=2, sticky=W, columnspan=2)
