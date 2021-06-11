@@ -7,21 +7,19 @@ For training the model refer to the IPython notebook
 #libraries
 from tkinter import *
 import tkinter as tk
-from PIL import ImageGrab
+from PIL import ImageGrab ,ImageTk, Image
 import numpy as np
 import cv2
 import win32gui
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
 from keras.models import load_model
+
 
 # loading the model
 model = load_model(r'C:\Users\panka\Study\Machine Learning\Digit Recognition GUI\model.h5')
 
-# print("model loaded succesfully")
 
 def predict_digit(filename):
-    # opening the image and converting it fit fot input in model
+    # opening the image and converting it fit for input in model
     image = cv2.imread(filename)
     grey = cv2.cvtColor(image.copy(), cv2.COLOR_BGR2GRAY)
     ret, th = cv2.threshold(grey.copy(), 75, 255, cv2.THRESH_BINARY_INV)
@@ -50,7 +48,8 @@ def predict_digit(filename):
         cv2.putText(image, data, (x, y - 5), font, fontScale, color, thickness)
     #saving the final image and returning its file name
     cv2.imwrite('predict.png', image)
-    return 'predict.png'
+    return 'predict.png' 
+
 
 
 class App(tk.Tk):
@@ -58,9 +57,10 @@ class App(tk.Tk):
         tk.Tk.__init__(self)
         self.lastx = self.lasty = None
         self.x = self.y = 0
-        self.geometry("820x690")
+        #self.geometry("820x690")
         self.resizable(0,0)
-        self.title("Handwritten Digit Recognition GUI")
+        #self.resizable(width = True, height = True)
+        self.title("Handwriiten Digit Recognition GUI")
 
 
         # Creating elements
@@ -74,22 +74,52 @@ class App(tk.Tk):
 
         # Grid structure
         self.canvas.grid(row=0, column=0, pady=2, sticky=W, columnspan=2)
-        self.classify_btn.grid(row=1, column=0, pady=2, padx=2)
-        self.button_clear.grid(row=1, column=1, pady=2, )
+        self.classify_btn.grid(row=1, column=1, pady=2, padx=2)
+        self.button_clear.grid(row=1, column=2, pady=2, padx =2)
         self.canvas.bind("<Button-1>", self.activate_event)
+        
+        img = Image.open("First.jpg")
+        # PhotoImage class is used to add image to widgets, icons etc
+        img = ImageTk.PhotoImage(img)
+   
+        # create a label
+        panel = Label(self, image = img)
+      
+        # set the image as img 
+        panel.image = img
+        panel.grid(row=0, column=2)
 
     def clear_all(self):
         #clear button
         self.canvas.delete("all")
+        #reset the output screen
+        img = Image.open("First.jpg")
+      
+        # PhotoImage class is used to add image to widgets, icons etc
+        img = ImageTk.PhotoImage(img)
+   
+        # create a label
+        panel = Label(self, image = img)
+      
+        # set the image as img 
+        panel.image = img
+        panel.grid(row=0, column=2)
 
     def classify_handwriting(self):
         HWND = self.canvas.winfo_id()         # get the handle of the canvas
         rect = win32gui.GetWindowRect(HWND)   # get the coordinate of the canvas
         ImageGrab.grab(rect).save('test.png') # taking ss of canvas
 
-        file_name = predict_digit("test.png") 
-        img = mpimg.imread(file_name)   #loading the predicted image
-        plt.imshow(img, aspect='auto')  #output
+        file_name = predict_digit("test.png")  
+        # opens the output image
+        img = Image.open(file_name)
+        # PhotoImage class is used to add image to widgets, icons etc
+        img = ImageTk.PhotoImage(img)
+   
+        panel = Label(self, image = img)
+        #   set the image as img 
+        panel.image = img
+        panel.grid(row=0, column=2)
 
     def activate_event(self, event):
         self.canvas.bind('<B1-Motion>', self.draw_lines)
