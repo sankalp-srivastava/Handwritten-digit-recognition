@@ -6,7 +6,7 @@ The `Handwritten_Digit_Recogniton.ipynb` contains the code to train your CNN Mod
 The Dataset used is MNIST Handwritten Digit Classification Dataset
 ### GUI.py
 This .py file contains code for buliding a GUI.
-![UI](UI_2.jpg)
+![UI](UI.jpg)
 
 ## Prerequisites
 Install all Python Libraries given in `requirements.txt` for the GUI.py
@@ -20,6 +20,7 @@ For virtualenv to install all files in the requirements.txt file.
 ## Screenshots
 ![test](/images/test.png)
 ![predict](images/predict.png)
+![UI](images/Screenshot%202021-06-11%20133527.jpg)
 
 ## Steps to run
 1.  Put the `model.h5` file in working directory
