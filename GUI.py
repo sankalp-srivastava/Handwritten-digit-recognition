@@ -5,8 +5,8 @@ For training the model refer to the IPython notebook
 
 '''
 #libraries
-from tkinter import *
 import tkinter as tk
+import tkinter.filedialog as filedialog
 from PIL import ImageGrab ,ImageTk, Image
 import numpy as np
 import cv2
@@ -17,8 +17,8 @@ from keras.models import load_model
 # loading the model
 model = load_model(r'C:\Users\panka\Study\Machine Learning\Digit Recognition GUI\model.h5')
 
-
 def predict_digit(filename):
+
     # opening the image and converting it fit for input in model
     image = cv2.imread(filename)
     grey = cv2.cvtColor(image.copy(), cv2.COLOR_BGR2GRAY)
@@ -40,17 +40,16 @@ def predict_digit(filename):
         # sending the padded digit to model and prediciting
         prediction = model.predict(padded_digit.reshape(1, 28, 28, 1))
         #writing prediciton on image
-        data = "Prediction = " + str(np.argmax(prediction))
+        data = "Pred = " + str(np.argmax(prediction))
+        #print(data)
         font = cv2.FONT_HERSHEY_SIMPLEX
         fontScale = 0.5
-        color = (255, 0, 0)
+        color = (0, 0, 0)
         thickness = 1
         cv2.putText(image, data, (x, y - 5), font, fontScale, color, thickness)
-    #saving the final image and returning its file name
+    #resizing & saving the final image
+    image = cv2.resize(image,(800,600))
     cv2.imwrite('predict.png', image)
-    return 'predict.png' 
-
-
 
 class App(tk.Tk):
     def __init__(self):
@@ -71,11 +70,16 @@ class App(tk.Tk):
         self.button_clear = tk.Button(self, text="Clear", command=self.clear_all,
                                       bg='deep sky blue')
         self.button_clear.config(font=('helvetica', 14, 'bold'))
+        self.openfile = tk.Button(self, text="Open A File", command=self.open_file,
+                                      bg='deep sky blue')
+        self.openfile.config(font=('helvetica', 14, 'bold'))
+
 
         # Grid structure
-        self.canvas.grid(row=0, column=0, pady=2, sticky=W, columnspan=2)
-        self.classify_btn.grid(row=1, column=1, pady=2, padx=2)
-        self.button_clear.grid(row=1, column=2, pady=2, padx =2)
+        self.canvas.grid(row=0, column=0, pady=2, sticky=tk.W, columnspan=3)
+        self.classify_btn.grid(row=1, column=0, pady=2, padx=2,columnspan=2)
+        self.button_clear.grid(row=1, column=2, pady=2, padx =2,columnspan =2)
+        self.openfile.grid(row=1, column=4, pady=2, padx =2)
         self.canvas.bind("<Button-1>", self.activate_event)
         
         img = Image.open("First.jpg")
@@ -83,11 +87,11 @@ class App(tk.Tk):
         img = ImageTk.PhotoImage(img)
    
         # create a label
-        panel = Label(self, image = img)
+        panel = tk.Label(self, image = img)
       
         # set the image as img 
         panel.image = img
-        panel.grid(row=0, column=2)
+        panel.grid(row=0, column=3,columnspan = 3)
 
     def clear_all(self):
         #clear button
@@ -99,27 +103,37 @@ class App(tk.Tk):
         img = ImageTk.PhotoImage(img)
    
         # create a label
-        panel = Label(self, image = img)
+        panel = tk.Label(self, image = img)
       
         # set the image as img 
         panel.image = img
-        panel.grid(row=0, column=2)
-
+        panel.grid(row=0, column=3,columnspan = 3)
+    def open_file(self):
+        file_path = filedialog.askopenfilename()
+        predict_digit(file_path)
+        img = Image.open('predict.png')
+        # PhotoImage class is used to add image to widgets, icons etc
+        img = ImageTk.PhotoImage(img)
+        panel = tk.Label(self, image = img)
+        #   set the image as img 
+        panel.image = img
+        panel.grid(row=0, column=3,columnspan = 3)
+         
     def classify_handwriting(self):
         HWND = self.canvas.winfo_id()         # get the handle of the canvas
         rect = win32gui.GetWindowRect(HWND)   # get the coordinate of the canvas
         ImageGrab.grab(rect).save('test.png') # taking ss of canvas
 
-        file_name = predict_digit("test.png")  
+        predict_digit("test.png")  
         # opens the output image
-        img = Image.open(file_name)
+        img = Image.open('predict.png')
         # PhotoImage class is used to add image to widgets, icons etc
         img = ImageTk.PhotoImage(img)
    
-        panel = Label(self, image = img)
+        panel = tk.Label(self, image = img)
         #   set the image as img 
         panel.image = img
-        panel.grid(row=0, column=2)
+        panel.grid(row=0, column=3,columnspan = 3)
 
     def activate_event(self, event):
         self.canvas.bind('<B1-Motion>', self.draw_lines)
@@ -129,9 +143,9 @@ class App(tk.Tk):
         self.x = event.x
         self.y = event.y
         self.canvas.create_line((self.lastx, self.lasty, self.x, self.y), width=8, fill='black',
-                                capstyle=ROUND, smooth=TRUE, splinesteps=12)
+                                capstyle=tk.ROUND, smooth=tk.TRUE, splinesteps=12)
         self.lastx, self.lasty = self.x, self.y
 
 
 app = App()
-mainloop()
+tk.mainloop()
